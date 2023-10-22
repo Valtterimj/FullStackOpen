@@ -1,27 +1,34 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    browser->>server: POST /exampleapp/new_note
     activate server
-    server-->>browser: HTML document
+    server-->>browser: 302 Found
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    Note right of browser: Browser sends the user input to the server, which responds with status code and asks the browser to execute a new HTTP GET request
+
+    browser->>server: GET /exampleapp/notes HTTP/1.1
     activate server
-    server-->>browser: the css file
+    server-->>browser: HTTP/1.1 200 OK
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    Note right of browser: Browser makes a new HTTP GET request which leads to 3 more GET requests for css, js and data files.
+
+    browser->>server: GET /exampleapp/main.css HTTP/1.1
     activate server
-    server-->>browser: the JavaScript file
+    server-->>browser: HTTP/1.1 200 OK
     deactivate server
 
-    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
-
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    browser->>server: GET /exampleapp/main.js HTTP/1.1
     activate server
-    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    server-->>browser: HTTP/1.1 200 OK
     deactivate server
 
-    Note right of browser: The browser executes the callback function that renders the notes
+    browser->>server: GET /exampleapp/data.json HTTP/1.1
+    activate server
+    server-->>browser: HTTP/1.1 200 OK
+    deactivate server
+
